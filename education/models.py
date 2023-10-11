@@ -23,6 +23,8 @@ class Lesson(models.Model):
     description = models.TextField(verbose_name='Описание', **NULLABLE)
     link = models.URLField(max_length=250, verbose_name='Ссылка на видео', **NULLABLE)
 
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, verbose_name='Курс', **NULLABLE)
+
     def __str__(self):
         return f'{self.title}'
 
