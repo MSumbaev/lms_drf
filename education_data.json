@@ -1,0 +1,101 @@
+[
+  {
+    "model": "education.course",
+    "pk": 1,
+    "fields": {
+      "title": "ООП",
+      "preview": "",
+      "description": "Объектно-ориентированное программирование — методология программирования, основанная на представлении программы в виде совокупности объектов, каждый из которых является экземпляром определённого класса, а классы образуют иерархию наследования."
+    }
+  },
+  {
+    "model": "education.course",
+    "pk": 2,
+    "fields": {
+      "title": "DRF",
+      "preview": "",
+      "description": "Django REST framework (DRF) — это мощный и гибкий инструмент для создания Web API на основе Django. Он предоставляет удобные средства для создания RESTful API, поддерживает аутентификацию, авторизацию, сериализацию, валидацию и другие функции."
+    }
+  },
+  {
+    "model": "education.lesson",
+    "pk": 1,
+    "fields": {
+      "title": "ViewSet",
+      "preview": "",
+      "description": "ViewSet – классов, которые объединяют функциональность нескольких разных views.",
+      "link": null,
+      "course": 2
+    }
+  },
+  {
+    "model": "education.lesson",
+    "pk": 2,
+    "fields": {
+      "title": "Generic",
+      "preview": "",
+      "description": "Этот класс расширяет платформу REST APIView класс, добавляя обычно требуемое поведение для стандартного списка и представлений детали.Каждое из конкретных универсальных обеспеченных представлений создается путем объединения GenericAPIView, с одним или несколькими смесительными классами.",
+      "link": null,
+      "course": 2
+    }
+  },
+  {
+    "model": "education.lesson",
+    "pk": 3,
+    "fields": {
+      "title": "Магические методы",
+      "preview": "",
+      "description": "Это специальные методы, с помощью которых вы можете добавить в ваши классы «магию». Они всегда обрамлены двумя нижними подчеркиваниями (например, __init__ или __lt__ ).",
+      "link": null,
+      "course": 1
+    }
+  },
+  {
+    "model": "education.payments",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "date_of_payment": "2023-06-02",
+      "course": 2,
+      "lesson": null,
+      "amount": 25000,
+      "payment_method": "transfer"
+    }
+  },
+  {
+    "model": "education.payments",
+    "pk": 2,
+    "fields": {
+      "user": 2,
+      "date_of_payment": "2023-10-11",
+      "course": 2,
+      "lesson": null,
+      "amount": 25450,
+      "payment_method": "transfer"
+    }
+  },
+  {
+    "model": "education.payments",
+    "pk": 3,
+    "fields": {
+      "user": 1,
+      "date_of_payment": "2022-01-01",
+      "course": 1,
+      "lesson": null,
+      "amount": 15000,
+      "payment_method": "cash"
+    }
+  },
+  {
+    "model": "education.payments",
+    "pk": 4,
+    "fields": {
+      "user": 2,
+      "date_of_payment": "2023-04-16",
+      "course": null,
+      "lesson": 3,
+      "amount": 980,
+      "payment_method": "cash"
+    }
+  }
+]
