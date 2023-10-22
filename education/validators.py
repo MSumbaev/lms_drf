@@ -17,4 +17,4 @@ class LinkValidator:
 
         for link in links:
             if not bool(re.match(youtube_pattern, link)):
-                raise ValidationError('Можете добавить ссылку только на "youtube.com"!')
+                raise ValidationError('Можете добавить ссылку только на \'youtube.com\' !')
