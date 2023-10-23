@@ -1,12 +1,13 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
 from rest_framework.filters import OrderingFilter
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from education.models import Course, Lesson, Payments
+from education.models import Course, Lesson, Payments, Subscription
 from education.permissions import IsNotModerator, IsOwner, IsModerator
-from education.serializers import CourseSerializer, LessonSerializer, PaymentsSerializer, CourseCreateSerializer
+from education.serializers import *
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -29,7 +30,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         if not self.request.user.groups.filter(name='moderator'):
             queryset = queryset.filter(owner=self.request.user)
 
-        serializer = CourseSerializer(queryset, many=True)
+        serializer = CourseSerializer(queryset, many=True, context={'request': self.request})
         return Response(serializer.data)
 
     def get_permissions(self):
@@ -98,3 +99,52 @@ class PaymentsListAPIView(generics.ListAPIView):
     filterset_fields = ('course', 'lesson', 'payment_method')
     ordering_fields = ('date_of_payment',)
     permission_classes = [IsAuthenticated]
+
+
+class SubscriptionCreateAPIView(generics.CreateAPIView):
+    serializer_class = SubscriptionSerializer
+    permission_classes = [IsAuthenticated]
+
+    # Не работает!!!
+    # def perform_create(self, serializer, **kwargs):
+    #     subscription = serializer.save()
+    #     subscription.user = self.request.user.id
+    #     subscription.course = Course.objects.get(id=self.kwargs['pk']).id
+    #     subscription.save()
+
+    # Не работает!!!
+    # def create(self, request, *args, **kwargs):
+    #     new_subscription = Subscription(
+    #         user=self.request.user,
+    #         course=Course.objects.get(id=self.kwargs['pk'])
+    #     )
+    #     serializer = self.serializer_class(new_subscription, data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     else:
+    #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def create(self, request, *args, **kwargs):
+        request.data.update(
+            {
+                'user': request.user.pk,
+                'course': Course.objects.get(id=self.kwargs['pk']).pk
+            }
+        )
+        return super(SubscriptionCreateAPIView, self).create(request, *args, **kwargs)
+
+
+class SubscriptionDestroyAPIView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Subscription.objects.filter(user=self.request.user)
+        return queryset
+
+    def get_object(self, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        obj = get_object_or_404(queryset, course_id=Course.objects.get(id=self.kwargs['pk']))
+        self.check_object_permissions(self.request, obj)
+        return obj
