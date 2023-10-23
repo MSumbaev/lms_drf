@@ -6,12 +6,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from education.models import Course, Lesson, Payments, Subscription
+from education.paginators import EducationPaginator
 from education.permissions import IsNotModerator, IsOwner, IsModerator
 from education.serializers import *
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
+    pagination_class = EducationPaginator
 
     def perform_create(self, serializer):
         course = serializer.save()
@@ -30,7 +32,12 @@ class CourseViewSet(viewsets.ModelViewSet):
         if not self.request.user.groups.filter(name='moderator'):
             queryset = queryset.filter(owner=self.request.user)
 
-        serializer = CourseSerializer(queryset, many=True, context={'request': self.request})
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(page, many=True)
         return Response(serializer.data)
 
     def get_permissions(self):
@@ -60,6 +67,7 @@ class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated]
+    pagination_class = EducationPaginator
 
     def get_queryset(self):
         queryset = super().get_queryset()
