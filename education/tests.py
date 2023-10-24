@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from education.models import Lesson, Course
+from education.models import Lesson, Course, Subscription
 from users.models import User
 
 
@@ -53,7 +53,7 @@ class LessonCreateTestCase(APITestCase):
 
 
 class LessonDestroyTestCase(APITestCase):
-    def setUp(self) -> None:
+    def setUp(self):
         self.user = User.objects.create(
             email='test@test.com',
             password='test'
@@ -120,20 +120,20 @@ class LessonListTestCase(APITestCase):
         self.assertEqual(
             response.json(),
             {
-                    "count": 1,
-                    "next": None,
-                    "previous": None,
-                    "results": [
-                        {
-                            "id": self.lesson.pk,
-                            "title": "Test lesson",
-                            "preview": None,
-                            "description": "Test description",
-                            "link": "https://www.youtube.com/watch",
-                            "course": self.course.pk,
-                            "owner": self.user.pk
-                        }
-                    ]
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "id": self.lesson.pk,
+                        "title": "Test lesson",
+                        "preview": None,
+                        "description": "Test description",
+                        "link": "https://www.youtube.com/watch",
+                        "course": self.course.pk,
+                        "owner": self.user.pk
+                    }
+                ]
             }
         )
 
@@ -229,3 +229,55 @@ class LessonUpdateTestCase(APITestCase):
                 "owner": self.user.pk
             }
         )
+
+
+class SubscriptionTestCase(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create(
+            email='test@lms.com',
+            password='test'
+        )
+        self.course = Course.objects.create(
+            title='Test course',
+            description='Test description',
+            owner=self.user
+        )
+
+    def test_subscription_create(self):
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.post(
+            reverse('education:subscribe',
+                    args=[self.course.pk])
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_201_CREATED
+        )
+        self.assertEqual(Subscription.objects.count(), 1)
+
+        self.assertEqual(
+            response.json(),
+            {
+                'id': 1,
+                'user': self.user.pk,
+                'course': self.course.pk
+            }
+        )
+
+    def test_subscription_delete(self):
+        self.client.force_authenticate(user=self.user)
+
+        subscription = Subscription.objects.create(
+            user=self.user,
+            course=self.course
+        )
+
+        response = self.client.delete(
+            reverse('education:unsubscribe',
+                    args=[self.course.pk])
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Subscription.objects.count(), 0)
