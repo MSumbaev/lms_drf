@@ -77,7 +77,19 @@
       "owner": 4
     }
   },
-    {
+  {
+    "model": "education.lesson",
+    "pk": 5,
+    "fields": {
+      "title": "CBV",
+      "preview": "",
+      "description": "CBV - представления на основе классов",
+      "link": "https://www.youtube.com/watch?v=_0IDdU6PDJo&t=1159s&pp=ygUKZmJ2IGRqYW5nbw%3D%3D",
+      "course": 3,
+      "owner": 4
+    }
+  },
+  {
     "model": "education.payments",
     "pk": 1,
     "fields": {
@@ -123,6 +135,14 @@
       "lesson": 3,
       "amount": 980,
       "payment_method": "cash"
+    }
+  },
+  {
+    "model": "education.subscription",
+    "pk": 6,
+    "fields": {
+      "user": 4,
+      "course": 3
     }
   }
 ]
