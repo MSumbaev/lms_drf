@@ -18,8 +18,8 @@ class LessonSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    lesson_count = serializers.IntegerField(source='lesson_set.all.count')
-    lessons = LessonSerializer(source='lesson_set.all', many=True)
+    lesson_count = serializers.IntegerField(source='lesson_set.all.count', read_only=True)
+    lessons = LessonSerializer(source='lesson_set.all', many=True, read_only=True)
 
     is_subscribed = serializers.SerializerMethodField()
 
