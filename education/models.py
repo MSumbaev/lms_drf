@@ -9,6 +9,7 @@ class Course(models.Model):
     title = models.CharField(max_length=150, verbose_name='Название')
     preview = models.ImageField(upload_to='education/course/', verbose_name='Превью', **NULLABLE)
     description = models.TextField(verbose_name='Описание', **NULLABLE)
+    price = models.PositiveIntegerField(default=1000, verbose_name='Цена')
 
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец', **NULLABLE)
 
@@ -25,6 +26,7 @@ class Lesson(models.Model):
     preview = models.ImageField(upload_to='education/lesson/', verbose_name='Превью', **NULLABLE)
     description = models.TextField(verbose_name='Описание', **NULLABLE)
     link = models.URLField(max_length=250, verbose_name='Ссылка на видео', **NULLABLE)
+    price = models.PositiveIntegerField(default=100, verbose_name='Цена')
 
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, verbose_name='Курс', **NULLABLE)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец', **NULLABLE)
@@ -53,8 +55,9 @@ class Payments(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс', **NULLABLE)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name='Урок', **NULLABLE)
 
-    amount = models.IntegerField(verbose_name='Сумма оплаты')
+    amount = models.IntegerField(verbose_name='Сумма оплаты', **NULLABLE)
     payment_method = models.CharField(max_length=20, choices=METHOD, verbose_name='Способ оплаты')
+    stripe_id = models.CharField(max_length=150, unique=True, **NULLABLE)
 
     def __str__(self):
         return f'{self.user} - {self.amount} / {self.date_of_payment}'
