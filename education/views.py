@@ -73,7 +73,7 @@ class LessonListAPIView(generics.ListAPIView):
         queryset = super().get_queryset()
 
         if not self.request.user.groups.filter(name='moderator'):
-            queryset = queryset.filter(owner=self.request.user)
+            queryset = queryset.filter(owner=self.request.user.pk)
 
         return queryset
 
@@ -98,6 +98,11 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 class PaymentsCreateAPIView(generics.CreateAPIView):
     serializer_class = PaymentsSerializer
     permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        payment = serializer.save()
+        payment.user = self.request.user
+        payment.save()
 
 
 class PaymentsListAPIView(generics.ListAPIView):
@@ -147,7 +152,7 @@ class SubscriptionDestroyAPIView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Subscription.objects.filter(user=self.request.user)
+        queryset = Subscription.objects.filter(user=self.request.user.pk)
         return queryset
 
     def get_object(self, *args, **kwargs):
