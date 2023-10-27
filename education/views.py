@@ -96,12 +96,20 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 
 
 class PaymentsCreateAPIView(generics.CreateAPIView):
-    serializer_class = PaymentsSerializer
+    serializer_class = PaymentCreateSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         payment = serializer.save()
         payment.user = self.request.user
+
+        if payment.course is not None:
+            payment.amount = Course.objects.get(pk=payment.course.pk).price
+
+        if payment.lesson is not None:
+            payment.amount = Lesson.objects.get(pk=payment.lesson.pk).price
+
+        print(self.request)
         payment.save()
 
 
