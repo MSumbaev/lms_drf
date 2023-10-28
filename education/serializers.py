@@ -67,7 +67,6 @@ class PaymentsSerializer(serializers.ModelSerializer):
 
 class PaymentCreateSerializer(serializers.ModelSerializer):
     payment_data = serializers.SerializerMethodField()
-    amount = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Payments
