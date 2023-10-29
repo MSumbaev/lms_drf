@@ -10,6 +10,7 @@ class Course(models.Model):
     preview = models.ImageField(upload_to='education/course/', verbose_name='Превью', **NULLABLE)
     description = models.TextField(verbose_name='Описание', **NULLABLE)
     price = models.PositiveIntegerField(default=1000, verbose_name='Цена')
+    date_of_last_modification = models.DateField(auto_now=True, verbose_name='Дата последнего изменения', **NULLABLE)
 
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец', **NULLABLE)
 
@@ -27,6 +28,7 @@ class Lesson(models.Model):
     description = models.TextField(verbose_name='Описание', **NULLABLE)
     link = models.URLField(max_length=250, verbose_name='Ссылка на видео', **NULLABLE)
     price = models.PositiveIntegerField(default=100, verbose_name='Цена')
+    date_of_last_modification = models.DateField(auto_now=True, verbose_name='Дата последнего изменения', **NULLABLE)
 
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, verbose_name='Курс', **NULLABLE)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец', **NULLABLE)
@@ -48,7 +50,7 @@ class Payments(models.Model):
         (TRANSFER, 'Перевод'),
     )
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', **NULLABLE)
 
     date_of_payment = models.DateField(auto_now_add=True, verbose_name='Дата оплаты')
 
