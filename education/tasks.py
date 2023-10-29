@@ -25,3 +25,12 @@ def send_update_notification(course_pk):
             from_email=settings.EMAIL_HOST_USER,
             fail_silently=False
         )
+
+@shared_task
+def check_by_login_date():
+    check_date = datetime.utcnow() - timedelta(days=30)
+    users = User.objects.filter(last_login__lt=check_date)
+
+    for user in users:
+        user.is_active = False
+        user.save()
